@@ -1,0 +1,145 @@
+# For reference: https://docs.devrev.ai/snap-ins/references/manifest.
+# Refactor the code based on your business logic.
+
+version: "2"
+name: "Search Agent Operation"
+description: "Defines search operation for agents."
+
+# This is the name displayed in DevRev where the Snap-In takes actions using the token of this service account.
+service_account:
+  display_name: DevRev Bot
+
+# Functions reference: https://docs.devrev.ai/snap-ins/references/functions.
+functions:
+  - name: operation_handler
+    description: function to handle operations
+
+operations:
+  - name: api_call
+    description: Skill to call an API. DO NOT USE THIS IN PRODUCTION.
+    slug: api_call
+    function: operation_handler
+    type: action
+    inputs:
+      fields:
+        - name: authorization
+          description: Authorization header for the API call. If empty, caller's devrev access token is used. DO NOT SHARE ANY PRIVATE TOKEN, SHOULD ONLY HAVE TOKENS OF DEMO WORKSPACES OF ANY TOOL.
+          field_type: text
+          is_required: false
+          ui:
+            display_name: Authorization
+        - name: url
+          description: The url to be used for the API call.
+          field_type: text
+          is_required: true
+          ui:
+            display_name: URL
+        - name: method
+          description: The method to be used for the API call. One of GET, POST, PUT, DELETE.
+          field_type: text
+          is_required: false
+          ui:
+            display_name: Method
+        - name: payload
+          description: The payload to be used for the API call.
+          field_type: text
+          is_required: false
+          ui:
+            display_name: Payload
+    outputs:
+      fields:
+        - name: response
+          field_type: text
+          ui:
+            display_name: Response
+  - name: agent_search
+    description: Given a query, the skill searches for tickets matching the query in its title and comments.
+    slug: agent_search
+    function: operation_handler
+    type: action
+    inputs:
+      fields:
+        - name: query
+          description: The search query.
+          field_type: text
+          is_required: true
+          ui:
+            display_name: Query
+        - name: namespace
+          description: The namespace to search in.
+          field_type: text
+          is_required: true
+          ui:
+            display_name: Namespace
+    outputs:
+      fields:
+      # String encoded articles containing <display_id>, <URL>, <title>, <text>, and a <score> for each article.
+        - name: response
+          field_type: array
+          base_type: text
+          ui:
+            display_name: Response
+  - name: get_object
+    description: Given an object id, the skill fetches the object from DevRev SOR.
+    slug: get_object
+    function: operation_handler
+    type: action
+    inputs:
+      fields:
+        - name: id
+          description: The object id.
+          field_type: text
+          is_required: true
+          ui:
+            display_name: ID
+    outputs:
+      fields:
+      # String encoded articles containing <display_id>, <URL>, <title>, <text>, and a <score> for each article.
+        - name: response
+          field_type: text
+          ui:
+            display_name: Response
+  - name: get_article_extracted_content
+    description: Given an article id, the skill fetches the article content of resource type articles.
+    slug: get_article_extracted_content
+    function: operation_handler
+    type: action
+    inputs:
+      fields:
+        - name: id
+          description: The article id.
+          field_type: text
+          is_required: false
+          ui:
+            display_name: ID
+        - name: content
+          description: The content of the article.
+          field_type: text
+          is_required: false
+          ui:
+            display_name: Content
+    outputs:
+      fields:
+        - name: response
+          field_type: text
+          ui:
+            display_name: Response
+  - name: create_article
+    description: Given a content, the skill creates an article.
+    slug: create_article
+    function: operation_handler
+    type: action
+    inputs:
+      fields:
+        - name: content
+          description: The content of the article.
+          field_type: text
+          is_required: false
+          ui:
+            display_name: Content
+    outputs:
+      fields:
+        - name: response
+          field_type: text
+          ui:
+            display_name: Response
